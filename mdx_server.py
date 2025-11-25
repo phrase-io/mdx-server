@@ -5,6 +5,7 @@ import threading
 import re
 import os
 import sys
+from urllib.parse import unquote
 
 
 from wsgiref.simple_server import make_server
@@ -69,6 +70,14 @@ def application(environ, start_response):
     word = ''
     if m is not None:
         word = m.groups()[0]
+
+    if path_info.startswith('/api/entry/'):
+        api_word = unquote(path_info[len('/api/entry/'):])
+        start_response('200 OK', [('Content-Type', 'application/json; charset=utf-8')])
+        return get_definition_json(api_word, builder)
+    if path_info == '/api/entry':
+        start_response('400 Bad Request', [('Content-Type', 'application/json; charset=utf-8')])
+        return [b'{"error":"word required"}']
 
     url_map = get_url_map()
 

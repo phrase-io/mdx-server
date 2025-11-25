@@ -35,6 +35,7 @@ MDX Server 是一个轻量级的本地 HTTP 服务，用来读取 MDX/MDD 词典
 - Tkinter（用于 GUI 选词典，可以通过命令行参数绕过）。
 - `pattern` 包（`lemma.py` 调用），如只在命令行指定词典并且不需要词形还原可忽略。
 - 可选 `python-lzo`，用于解析旧版使用 LZO 压缩的词典，否则会提示缺失但一般不影响新版词典。
+- 可选 `beautifulsoup4`，若要使用 `/api/entry/{word}` JSON 接口，需要依赖它解析词条结构。
 
 ## 5. 安装与启动
 1. **准备 Python 环境**：
@@ -62,6 +63,7 @@ MDX Server 是一个轻量级的本地 HTTP 服务，用来读取 MDX/MDD 词典
 | `/`、`/word` | GET | 指定单词的 HTML 解释，附加 `mdx/` 里的注入内容。|
 | `/injection.css`、`/injection.js`、`/jquery/jquery.min.js` | GET | `mdx/` 目录中的静态文件，可根据需要扩展。|
 | `/audio/example.mp3` 等 | GET | 从 `.mdd` 中提取的音频/图片等多媒体资源，依据 `content_type_map` 设置返回类型。|
+| `/api/entry/{word}` | GET | 返回结构化 JSON（词头、音标、义项、例句、音频/图片引用等），方便自定义 UI 消费。|
 
 ## 7. 自定义与扩展
 - **注入内容**：编辑 `mdx/injection.html`、`injection.js`、`injection.css`，或在 `mdx/` 中增加新的文件，即可影响所有返回页面。
