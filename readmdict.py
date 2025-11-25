@@ -25,6 +25,7 @@ import json
 
 from ripemd128 import ripemd128
 from pureSalsa20 import Salsa20
+from multi_file_reader import open_binary
 
 # zlib compression is used for engine version >=2.0
 import zlib
@@ -246,7 +247,7 @@ class MDict(object):
         return key_list
 
     def _read_header(self):
-        f = open(self._fname, 'rb')
+        f = open_binary(self._fname)
         # number of bytes of header text
         header_bytes_size = unpack('>I', f.read(4))[0]
         header_bytes = f.read(header_bytes_size)
@@ -315,7 +316,7 @@ class MDict(object):
         return header_tag
 
     def _read_keys(self):
-        f = open(self._fname, 'rb')
+        f = open_binary(self._fname)
         f.seek(self._key_block_offset)
 
         # the following numbers could be encrypted
@@ -373,7 +374,7 @@ class MDict(object):
         return key_list
 
     def _read_keys_brutal(self):
-        f = open(self._fname, 'rb')
+        f = open_binary(self._fname)
         f.seek(self._key_block_offset)
 
         # the following numbers could be encrypted, disregard them!
@@ -437,7 +438,7 @@ class MDD(MDict):
         return self._decode_record_block()
 
     def _decode_record_block(self):
-        f = open(self._fname, 'rb')
+        f = open_binary(self._fname)
         f.seek(self._record_block_offset)
 
         num_record_blocks = self._read_number(f)
@@ -513,7 +514,7 @@ class MDD(MDict):
         ###  record_end
         ###  offset
     def get_index(self, check_block = True):
-        f = open(self._fname, 'rb')
+        f = open_binary(self._fname)
         index_dict_list = []
         f.seek(self._record_block_offset)
 
@@ -633,7 +634,7 @@ class MDX(MDict):
         return txt_styled
 
     def _decode_record_block(self):
-        f = open(self._fname, 'rb')
+        f = open_binary(self._fname)
         f.seek(self._record_block_offset)
 
         num_record_blocks = self._read_number(f)
@@ -740,7 +741,7 @@ class MDX(MDict):
     def get_index(self, check_block = True):
         ###  索引列表
         index_dict_list = []
-        f = open(self._fname, 'rb')
+        f = open_binary(self._fname)
         f.seek(self._record_block_offset)
 
         num_record_blocks = self._read_number(f)

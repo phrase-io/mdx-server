@@ -13,21 +13,51 @@ function audio_content_type(ext){
     
 }
 
-$(document).ready(function(){
-    $("body a").click(function(){
-        var tag = $(this).attr("href");
-        if (!tag) {
-            return
-        }
-        if (tag.startsWith("sound://")) {
-            $("#audiotag").attr("src", "/" + tag.substr("sound://".length));
-            $("#audiotag").attr("type", audio_content_type(tag.slice(-3)));
-            try {
-                audioElement = document.getElementById("audiotag");
-                audioElement.play()
-            } catch (err) {
+function handleSoundLink(event, element) {
+    var tag = element.getAttribute("href");
+    if (!tag) {
+        return false;
+    }
+    var url = tag.trim();
+    if (!url) {
+        return false;
+    }
+    var lower = url.toLowerCase();
+    if (!lower.startsWith("/sound/")) {
+        return false;
+    }
+    var relativePath = url;
+    if (!relativePath) {
+        return false;
+    }
+    event.preventDefault();
+    if (event.stopImmediatePropagation) {
+        event.stopImmediatePropagation();
+    } else {
+        event.stopPropagation();
+    }
+    var audioElement = document.getElementById("audiotag");
+    if (!audioElement) {
+        return false;
+    }
+    audioElement.setAttribute("src", relativePath);
+    audioElement.setAttribute("type", audio_content_type(relativePath.slice(-3)));
+    try {
+        audioElement.play();
+    } catch (err) {
+    }
+    return true;
+}
+
+document.addEventListener("click", function(event){
+    var node = event.target;
+    while (node && node !== document) {
+        if (node.tagName && node.tagName.toLowerCase() === "a") {
+            if (handleSoundLink(event, node)) {
+                return false;
             }
-            return
+            break;
         }
-    });
-});
+        node = node.parentNode;
+    }
+}, true);

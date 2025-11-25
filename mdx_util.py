@@ -12,17 +12,23 @@ def get_definition_mdx(word, builder):
         fp = os.popen('python lemma.py ' + word)
         word = fp.read().strip()
         fp.close()
-        print("lemma: " + word)
-        content = builder.mdx_lookup(word)
+        if word:
+            print("lemma: " + word)
+            content = builder.mdx_lookup(word)
     pattern = re.compile(r"@@@LINK=([\w\s]*)")
-    rst = pattern.match(content[0])
-    if rst is not None:
-        link = rst.group(1).strip()
-        content = builder.mdx_lookup(link)
+    if content:
+        rst = pattern.match(content[0])
+        if rst is not None:
+            link = rst.group(1).strip()
+            content = builder.mdx_lookup(link)
     str_content = ""
     if len(content) > 0:
         for c in content:
             str_content += c.replace("\r\n","").replace("entry:/","")
+    else:
+        str_content = "<p>No entry found.</p>"
+
+    str_content = re.sub(r'(?i)sound://', '/sound/', str_content)
 
     injection = []
     injection_html = ''
@@ -49,7 +55,8 @@ def get_definition_mdx(word, builder):
 
 def get_definition_mdd(word, builder):
     """根据关键字得到MDX词典的媒体"""
-    word = word.replace("/","\\")
+    if builder is None:
+        return []
     content = builder.mdd_lookup(word)
     if len(content) > 0:
         return [content[0]]

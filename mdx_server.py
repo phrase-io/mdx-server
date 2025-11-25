@@ -7,13 +7,6 @@ import os
 import sys
 
 
-if sys.version_info < (3, 0, 0):
-    import Tkinter as tk
-    import tkFileDialog as filedialog
-else:
-    import tkinter as tk
-    import tkinter.filedialog as filedialog
-
 from wsgiref.simple_server import make_server
 from file_util import *
 from mdx_util import *
@@ -45,13 +38,13 @@ content_type_map = {
 }
 
 try:
-    # PyInstaller creates a temp folder and stores path in _MEIPASS
-    #base_path = sys._MEIPASS
     base_path = os.path.dirname(sys.executable)
 except Exception:
     base_path = os.path.abspath(".")
-        
+
 resource_path = os.path.join(base_path, 'mdx')
+if not os.path.isdir(resource_path):
+    resource_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mdx')
 print("resouce path : " + resource_path)
 builder = None
 
@@ -106,6 +99,18 @@ def loop():
     httpd.serve_forever()
 
 
+def select_file_with_gui():
+    if sys.version_info < (3, 0, 0):
+        import Tkinter as tk
+        import tkFileDialog as filedialog
+    else:
+        import tkinter as tk
+        import tkinter.filedialog as filedialog
+    root = tk.Tk()
+    root.withdraw()
+    return filedialog.askopenfilename(parent=root)
+
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
@@ -114,9 +119,7 @@ if __name__ == '__main__':
 
     # use GUI to select file, default to extract
     if not args.filename:
-        root = tk.Tk()
-        root.withdraw()
-        args.filename = filedialog.askopenfilename(parent=root)
+        args.filename = select_file_with_gui()
 
     if not os.path.exists(args.filename):
         print("Please specify a valid MDX/MDD file")
