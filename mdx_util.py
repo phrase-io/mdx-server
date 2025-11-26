@@ -72,7 +72,7 @@ class LRUCacheBytes(object):
                 self.current_bytes -= len(evicted)
 
 
-CACHE_VERSION = 'json-v2'
+CACHE_VERSION = 'json-v3'
 json_cache = LRUCacheBytes(max_bytes=1024 * 1024 * 1024)  # 1GB
 
 def get_definition_mdx(word, builder):

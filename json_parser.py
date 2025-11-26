@@ -179,6 +179,8 @@ def _extract_help_entries(sn_tag):
 
 def _parse_collocation_items(unbox):
     items = []
+    if not unbox:
+        return items
     for li in unbox.find_all('li'):
         und = li.find('und') or li
         pattern = _text_excluding(und)
@@ -196,26 +198,67 @@ def _parse_collocation_items(unbox):
 def _extract_collocations(sn_tag):
     collocations = []
     for box in sn_tag.find_all('unbox', {'type': 'colloc'}):
-        entry = {}
+        base_entry = {}
         label = box.find('utitle')
         title = _text_excluding(label)
         if title:
-            entry['title'] = title
+            base_entry['title'] = title
         translation = _text(label.find('chn')) if label else None
         if translation:
-            entry['translation'] = translation
+            base_entry['translation'] = translation
+        sections = []
+        section_map = {}
+        default_key = object()
+
+        def ensure_section(heading):
+            key = heading if heading is not None else default_key
+            entry = section_map.get(key)
+            if entry:
+                return entry
+            entry = dict(base_entry)
+            if heading is not None:
+                subtitle = _text_excluding(heading)
+                if subtitle:
+                    entry['subtitle'] = subtitle
+                subtitle_tr = _text(heading.find('chn'))
+                if subtitle_tr:
+                    entry['subtitle_translation'] = subtitle_tr
+            section_map[key] = entry
+            sections.append(entry)
+            return entry
+
+        for ul in box.find_all('ul'):
+            if ul.find_parent('unbox', {'type': 'colloc'}) is not box:
+                continue
+            heading = ul.find_previous('h2')
+            while heading and heading.find_parent('unbox', {'type': 'colloc'}) is not box:
+                heading = heading.find_previous('h2')
+            entry = ensure_section(heading)
+            items = _parse_collocation_items(ul)
+            if items:
+                entry.setdefault('items', []).extend(items)
+
+        if sections:
+            for entry in sections:
+                entry = {k: v for k, v in entry.items() if v}
+                if entry.get('items'):
+                    collocations.append(entry)
+            continue
+
+        entry = dict(base_entry)
         heading = box.find('h2')
-        subtitle = _text_excluding(heading)
-        if subtitle:
-            entry['subtitle'] = subtitle
-        subtitle_tr = _text(heading.find('chn')) if heading else None
-        if subtitle_tr:
-            entry['subtitle_translation'] = subtitle_tr
+        if heading:
+            subtitle = _text_excluding(heading)
+            if subtitle:
+                entry['subtitle'] = subtitle
+            subtitle_tr = _text(heading.find('chn'))
+            if subtitle_tr:
+                entry['subtitle_translation'] = subtitle_tr
         items = _parse_collocation_items(box)
         if items:
             entry['items'] = items
         entry = {k: v for k, v in entry.items() if v}
-        if entry:
+        if entry.get('items'):
             collocations.append(entry)
     return collocations
 
