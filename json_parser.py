@@ -2,15 +2,32 @@ import json
 from urllib.parse import urlparse
 
 try:
-    from bs4 import BeautifulSoup
+    from bs4 import BeautifulSoup, NavigableString
 except ImportError:  # pragma: no cover - optional dependency
     BeautifulSoup = None
+    NavigableString = None
 
 
 def _text(tag):
     if not tag:
         return ''
     return ' '.join(tag.stripped_strings)
+
+
+def _text_excluding(tag, excluded=None):
+    if not tag:
+        return ''
+    excluded = excluded or {'chn', 'chnsep'}
+    parts = []
+    for node in tag.descendants:
+        if isinstance(node, NavigableString):
+            parent = node.parent
+            if parent and parent.name in excluded:
+                continue
+            value = str(node).strip()
+            if value:
+                parts.append(value)
+    return ' '.join(parts).strip()
 
 
 def _normalize_media_url(value):
@@ -27,213 +44,335 @@ def _normalize_media_url(value):
     return value
 
 
-def _extract_pronunciations(soup):
+def _collect_pronunciations(root):
     pronunciations = []
-    pron_tag = soup.find('pron')
+    if not root:
+        return pronunciations
+    pron_tag = root.find('pron-gs') or root.find('pron')
     if not pron_tag:
         return pronunciations
     for block in pron_tag.find_all('pron-g-blk', recursive=False):
-        region = None
-        label = block.find('brelabel') or block.find('namelabel') or block.find('label-g')
-        region = _text(label)
+        label = block.find('brelabel') or block.find('namelabel') or block.find('label')
+        region = _text(label) or None
         phon = block.find('phon')
         audio_link = None
         link = block.find('a', href=True)
         if link and '/sound/' in link['href']:
             audio_link = _normalize_media_url(link['href'])
-        pronunciations.append({
-            'region': region or None,
+        entry = {
+            'region': region,
             'ipa': _text(phon) or None,
             'audio': audio_link
-        })
-    return [p for p in pronunciations if p.get('ipa') or p.get('audio')]
+        }
+        entry = {k: v for k, v in entry.items() if v}
+        if entry:
+            pronunciations.append(entry)
+    return pronunciations
 
 
-def _extract_examples(sn):
+def _extract_use_notes(sn_tag):
+    notes = []
+    for use_blk in sn_tag.find_all('use-blk', recursive=False):
+        payload = use_blk.find('use') or use_blk
+        text = _text_excluding(payload)
+        translation = _text(payload.find('chn')) if payload else None
+        entry = {}
+        if text:
+            entry['text'] = text
+        if translation:
+            entry['translation'] = translation
+        if entry:
+            notes.append(entry)
+    return notes
+
+
+def _extract_patterns(sn_tag):
+    patterns = []
+    for cf_blk in sn_tag.find_all('cf-blk', recursive=False):
+        cf = cf_blk.find('cf')
+        if not cf:
+            continue
+        entry = {'pattern': _text_excluding(cf)}
+        translation = _text(cf.find('chn'))
+        if translation:
+            entry['translation'] = translation
+        if entry.get('pattern'):
+            patterns.append(entry)
+    return patterns
+
+
+def _block_in_sense(block, sn_tag):
+    parent = block
+    while parent:
+        if parent is sn_tag:
+            return True
+        if parent.name == 'unbox':
+            return False
+        parent = parent.parent
+    return False
+
+
+def _extract_examples(sn_tag):
     examples = []
-    for xgs in sn.find_all('x-gs', recursive=False):
-        for blk in xgs.find_all('x-g-blk', recursive=False):
-            x_tag = blk.find('x')
-            if not x_tag:
-                continue
-            example = {'text': _text(x_tag)}
-            chn = x_tag.find('chn')
-            if chn:
-                example['translation'] = _text(chn)
-            audios = []
-            audio_wrapper = blk.find('audio-wr')
-            if audio_wrapper:
-                for a in audio_wrapper.find_all('a', href=True):
-                    path = _normalize_media_url(a['href'])
-                    if path:
-                        audios.append(path)
-            if audios:
-                example['audio'] = audios
+    for blk in sn_tag.find_all('x-g-blk'):
+        if not _block_in_sense(blk, sn_tag):
+            continue
+        x_tag = blk.find('x')
+        if not x_tag:
+            continue
+        example = {'text': _text_excluding(x_tag)}
+        translation = _text(x_tag.find('chn'))
+        if translation:
+            example['translation'] = translation
+        audio_links = []
+        audio_wrapper = blk.find('audio-wr')
+        if audio_wrapper:
+            for anchor in audio_wrapper.find_all('a', href=True):
+                normalized = _normalize_media_url(anchor['href'])
+                if normalized:
+                    audio_links.append(normalized)
+        if audio_links:
+            example['audio'] = audio_links
+        cf = blk.find('cf')
+        if cf:
+            example['pattern'] = _text_excluding(cf)
+        example = {k: v for k, v in example.items() if v}
+        if example:
             examples.append(example)
     return examples
 
 
-def _extract_topics(sn):
-    topics = []
-    for topic in sn.find_all('topic', recursive=False):
-        level = [topic.get('l1'), topic.get('l2'), topic.get('l3')]
-        topics.append([t for t in level if t])
-    return [t for t in topics if t]
-
-
-def _extract_labels(sn):
+def _extract_labels(sn_tag):
     labels = []
-    for gram in sn.find_all('gram', recursive=False):
-        labels.append(_text(gram))
-    for label in sn.find_all('label-g', recursive=False):
-        labels.append(_text(label))
-    return [l for l in labels if l]
+    gram = sn_tag.find('gram-g')
+    if gram:
+        labels.append({'type': 'grammar', 'text': _text_excluding(gram)})
+    for label in sn_tag.find_all('label-g-blk', recursive=False):
+        labels.append({'type': 'label', 'text': _text_excluding(label)})
+    for reg in sn_tag.find_all('reg', recursive=False):
+        labels.append({'type': 'register', 'text': _text_excluding(reg)})
+    return [label for label in labels if label.get('text')]
 
 
-def _parse_sense(sn):
-    definition_tag = sn.find('def')
+def _extract_topics(sn_tag):
+    topics = []
+    for topic in sn_tag.find_all('topic', recursive=False):
+        level = [topic.get('l1'), topic.get('l2'), topic.get('l3')]
+        values = [item for item in level if item]
+        if values:
+            topics.append(values)
+    return topics
+
+
+def _parse_sense(sn_tag):
+    definition_tag = sn_tag.find('def')
     if not definition_tag:
         return None
-    definition = _text(definition_tag)
-    translation = None
-    chn = definition_tag.find('chn')
-    if chn:
-        translation = _text(chn)
-    sense = {
-        'definition': definition,
-        'translation': translation,
-        'labels': _extract_labels(sn),
-        'topics': _extract_topics(sn),
-        'examples': _extract_examples(sn)
-    }
-    sense = {k: v for k, v in sense.items() if v}
+    sense = {}
+    if sn_tag.get('eid'):
+        sense['id'] = sn_tag.get('eid')
+    sense['definition'] = _text_excluding(definition_tag)
+    translation = _text(definition_tag.find('chn'))
+    if translation:
+        sense['translation'] = translation
+    notes = _extract_use_notes(sn_tag)
+    if notes:
+        sense['notes'] = notes
+    patterns = _extract_patterns(sn_tag)
+    if patterns:
+        sense['patterns'] = patterns
+    labels = _extract_labels(sn_tag)
+    if labels:
+        sense['labels'] = labels
+    topics = _extract_topics(sn_tag)
+    if topics:
+        sense['topics'] = topics
+    examples = _extract_examples(sn_tag)
+    if examples:
+        sense['examples'] = examples
     return sense
 
 
-def _collect_senses_from_container(container):
-    senses = []
-    for sngs in container.find_all('sn-gs', recursive=False):
-        for sn in sngs.find_all('sn-g'):
-            sense = _parse_sense(sn)
-            if sense:
-                senses.append(sense)
-    return senses
-
-
-def _extract_parts(soup):
-    parts = []
-    subentries = soup.find_all('subentry-g')
-    if subentries:
-        for sub in subentries:
-            pos_tag = sub.find('pos')
-            part = {'pos': _text(pos_tag)} if pos_tag else {}
-            senses = _collect_senses_from_container(sub)
-            if senses:
-                part['senses'] = senses
-                parts.append(part)
-        if parts:
-            return parts
-
-    forbidden_parents = {'idm-g', 'idm-gs', 'idm-gs-blk', 'pv-g', 'pv-gs', 'pv-gs-blk'}
-    processed = set()
-    for top in soup.find_all('top-g'):
-        parent = top.parent
-        parent_name = parent.name if parent else ''
-        if parent_name in forbidden_parents:
-            continue
-        key = id(top)
-        if key in processed:
-            continue
-        processed.add(key)
-        pos_tag = top.find('pos')
-        part = {'pos': _text(pos_tag)} if pos_tag else {}
-        senses = []
-        sibling = top.next_sibling
-        while sibling:
-            name = getattr(sibling, 'name', None)
-            if name == 'top-g' and sibling.parent == parent:
-                break
-            if name == 'sn-gs':
-                for sn in sibling.find_all('sn-g'):
-                    sense = _parse_sense(sn)
-                    if sense:
-                        senses.append(sense)
-            sibling = sibling.next_sibling
-        if senses:
-            part['senses'] = senses
-            parts.append(part)
-    return parts
-
-
-def _extract_idioms(soup):
-    idioms = []
-    for idm_g in soup.find_all('idm-g'):
-        name = _text(idm_g.find('idm'))
-        def_tag = idm_g.find('def')
-        definition = _text(def_tag)
-        translation = None
-        if def_tag:
-            chn = def_tag.find('chn')
-            if chn:
-                translation = _text(chn)
-        if name:
-            entry = {'text': name, 'definition': definition}
+def _parse_usage_boxes(sn_group):
+    notes = []
+    for box in sn_group.find_all('unbox'):
+        data = {}
+        label = _text_excluding(box.find('utitle'))
+        if label:
+            data['label'] = label
+        header = box.find('h2') or box.find('h1')
+        title = _text_excluding(header)
+        if title:
+            data['title'] = title
+        translation = _text(header.find('chn')) if header else None
+        if translation:
+            data['translation'] = translation
+        entries = []
+        for x_block in box.find_all('x'):
+            entry = {'text': _text_excluding(x_block)}
+            translation = _text(x_block.find('chn'))
             if translation:
                 entry['translation'] = translation
+            entry = {k: v for k, v in entry.items() if v}
+            if entry:
+                entries.append(entry)
+        if entries:
+            data['entries'] = entries
+        data = {k: v for k, v in data.items() if v}
+        if data:
+            notes.append(data)
+    return notes
+
+
+def _parse_highlight_lists(sn_group):
+    lists = []
+    for body in sn_group.find_all('span', class_='body'):
+        entry = {}
+        title_tag = body.find(class_='h1') or body.find('h1')
+        title = _text_excluding(title_tag)
+        if title:
+            entry['title'] = title
+        translation = _text(title_tag.find('chn')) if title_tag else None
+        if translation:
+            entry['translation'] = translation
+        items = []
+        inline = body.find(class_='inline') or body
+        for item in inline.find_all('span', class_='li'):
+            value = _text(item)
+            if value:
+                items.append(value)
+        if items:
+            entry['items'] = items
+        entry = {k: v for k, v in entry.items() if v}
+        if entry:
+            lists.append(entry)
+    return lists
+
+
+def _parse_sn_group(sn_group):
+    result = {}
+    guide = sn_group.find('shcut')
+    if guide:
+        guideword = _text_excluding(guide)
+        if guideword:
+            result['guideword'] = guideword
+        translation = _text(guide.find('chn'))
+        if translation:
+            result['translation'] = translation
+    senses = []
+    for sn_tag in sn_group.find_all('sn-g'):
+        sense = _parse_sense(sn_tag)
+        if sense:
+            senses.append(sense)
+    if senses:
+        result['senses'] = senses
+    usage_notes = _parse_usage_boxes(sn_group)
+    if usage_notes:
+        result['usage_notes'] = usage_notes
+    highlight_lists = _parse_highlight_lists(sn_group)
+    if highlight_lists:
+        result['highlight_lists'] = highlight_lists
+    return result
+
+
+def _parse_forms(section):
+    forms = []
+    resg = section.find('res-g')
+    if resg:
+        vpforms = resg.find_all('vpform')
+        vpgs = resg.find_all('vp-g')
+        for label_tag, value_tag in zip(vpforms, vpgs):
+            label = _text(label_tag)
+            vp = value_tag.find('vp')
+            value = _text(vp)
+            if label and value:
+                forms.append({'label': label, 'value': value})
+    comp_block = section.find('if-gs-blk')
+    if comp_block:
+        items = []
+        for if_tag in comp_block.find_all('if'):
+            value = _text(if_tag)
+            if value:
+                items.append(value)
+        if items:
+            forms.append({'label': 'comparison', 'value': items})
+    return forms
+
+
+def _parse_idioms(block):
+    idioms = []
+    if not block:
+        return idioms
+    for idm in block.find_all('idm-g'):
+        entry = {'text': _text_excluding(idm.find('idm'))}
+        sn_tag = idm.find('sn-g')
+        if sn_tag:
+            sense = _parse_sense(sn_tag)
+            if sense:
+                definition = sense.get('definition')
+                if definition:
+                    entry['definition'] = definition
+                translation = sense.get('translation')
+                if translation:
+                    entry['translation'] = translation
+                if sense.get('examples'):
+                    entry['examples'] = sense['examples']
+        entry = {k: v for k, v in entry.items() if v}
+        if entry:
             idioms.append(entry)
     return idioms
 
 
-def _extract_phrasal_verbs(soup):
-    phrases = []
-    for pv in soup.find_all('pv'):
-        text = _text(pv)
-        if not text:
-            continue
-        parent = pv.find_parent('pv-g') or pv.find_parent('pv-blk')
-        def_tag = parent.find('def') if parent else None
-        entry = {'text': text}
-        if def_tag:
-            entry['definition'] = _text(def_tag)
-            chn = def_tag.find('chn')
-            if chn:
-                entry['translation'] = _text(chn)
-        phrases.append(entry)
-    return phrases
-
-
-def _extract_images(soup):
-    images = []
-    for img in soup.find_all('img'):
-        src = _normalize_media_url(img.get('src'))
-        if src:
-            images.append({'src': src, 'alt': img.get('alt')})
-    return images
-
-
-def _extract_related(soup):
-    related = []
-    for xr in soup.find_all('xr-g'):
-        link = xr.find('a', href=True)
-        if not link:
-            continue
-        related.append({'title': _text(link), 'href': link['href']})
-    return related
+def _parse_pos_section(section):
+    entry = {}
+    pos_value = section.get('id')
+    if not pos_value:
+        pos_tag = section.find('pos')
+        pos_value = _text(pos_tag) if pos_tag else None
+    if pos_value:
+        entry['pos'] = pos_value
+    forms = _parse_forms(section)
+    if forms:
+        entry['forms'] = forms
+    group_nodes = section.select('subentry-g > sn-gs')
+    if not group_nodes:
+        group_nodes = section.find_all('sn-gs', recursive=False)
+    groups = []
+    for sn_group in group_nodes:
+        data = _parse_sn_group(sn_group)
+        if data:
+            groups.append(data)
+    if groups:
+        entry['groups'] = groups
+    idioms = _parse_idioms(section.find('idm-gs-blk'))
+    if idioms:
+        entry['idioms'] = idioms
+    entry = {k: v for k, v in entry.items() if v}
+    if len(entry) > 1:
+        return entry
+    return None
 
 
 def parse_entry(html, resolved_word=None):
     if BeautifulSoup is None:
         raise RuntimeError('beautifulsoup4 is required for JSON parsing. Please install bs4.')
     soup = BeautifulSoup(html, 'html.parser')
-    top_heading = soup.find('h')
+    headword = soup.find('h')
+    sections = soup.select('div.cixing_part')
+    if not sections:
+        sections = soup.find_all('h-g')
+    if not sections:
+        sections = [soup]
+    entries = []
+    for section in sections:
+        data = _parse_pos_section(section)
+        if data:
+            entries.append(data)
+    pronunciations = _collect_pronunciations(soup.select_one('div.cixing_part') or soup)
     result = {
-        'word': resolved_word or (top_heading.get_text(strip=True) if top_heading else None),
-        'pronunciations': _extract_pronunciations(soup),
-        'parts': _extract_parts(soup),
-        'phrasal_verbs': _extract_phrasal_verbs(soup),
-        'idioms': _extract_idioms(soup),
-        'images': _extract_images(soup),
-        'related': _extract_related(soup)
+        'word': resolved_word or (headword.get_text(strip=True) if headword else None),
+        'pronunciations': pronunciations,
+        'entries': entries
     }
     return {k: v for k, v in result.items() if v}
 

@@ -72,6 +72,7 @@ class LRUCacheBytes(object):
                 self.current_bytes -= len(evicted)
 
 
+CACHE_VERSION = 'json-v2'
 json_cache = LRUCacheBytes(max_bytes=1024 * 1024 * 1024)  # 1GB
 
 def get_definition_mdx(word, builder):
@@ -103,7 +104,7 @@ def get_definition_mdx(word, builder):
 
 
 def get_definition_json(word, builder):
-    cache_key = word.lower()
+    cache_key = "{}:{}".format(CACHE_VERSION, word.lower())
     cached = json_cache.get(cache_key)
     if cached is not None:
         return [cached]

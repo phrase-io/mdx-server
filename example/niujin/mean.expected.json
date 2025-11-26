@@ -1,0 +1,1013 @@
+{
+  "word": "mean",
+  "pronunciations": [
+    {
+      "region": "BrE",
+      "ipa": "miːn",
+      "audio": "/sound/mean__gb_2.mp3"
+    },
+    {
+      "region": "NAmE",
+      "ipa": "miːn",
+      "audio": "/sound/mean__us_1.mp3"
+    }
+  ],
+  "entries": [
+    {
+      "pos": "verb",
+      "forms": [
+        {
+          "label": "present simple - I / you / we / they",
+          "value": "mean"
+        },
+        {
+          "label": "present simple - he / she / it",
+          "value": "means"
+        },
+        {
+          "label": "past simple",
+          "value": "meant"
+        },
+        {
+          "label": "past participle",
+          "value": "meant"
+        },
+        {
+          "label": "-ing form",
+          "value": "meaning"
+        }
+      ],
+      "groups": [
+        {
+          "guideword": "have as meaning",
+          "translation": "有含意",
+          "senses": [
+            {
+              "id": "mean_sng_1",
+              "definition": "to have sth as a meaning",
+              "translation": "表示…的意思",
+              "notes": [
+                {
+                  "text": "not used in the progressive tenses",
+                  "translation": "不用于进行时"
+                }
+              ],
+              "examples": [
+                {
+                  "text": "What does this sentence mean ?",
+                  "translation": "这个句子是什么意思？",
+                  "audio": [
+                    "/sound/_mean__gbs_1.mp3",
+                    "/sound/_mean__uss_1.mp3"
+                  ],
+                  "pattern": "~ sth"
+                },
+                {
+                  "text": "What is meant by 'batch processing' ?",
+                  "translation": "batch processing 是什么意思？",
+                  "audio": [
+                    "/sound/_mean__brs_8.mp3",
+                    "/sound/_mean__uss_8.mp3"
+                  ]
+                },
+                {
+                  "text": "Does the name 'Jos Vos' mean anything to you (= do you know who he is ) ?",
+                  "translation": "你知道乔斯 · 沃斯是谁吗？",
+                  "audio": [
+                    "/sound/_mean__gbs_8.mp3",
+                    "/sound/_mean__ams_8.mp3"
+                  ],
+                  "pattern": "~ sth to sb"
+                },
+                {
+                  "text": "The flashing light means ( that ) you must stop .",
+                  "translation": "闪烁的灯光表示你必须停下。",
+                  "pattern": "~ ( that ) …"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "intend as meaning",
+          "translation": "意思是",
+          "senses": [
+            {
+              "id": "mean_sng_2",
+              "definition": "to intend to say sth on a particular occasion",
+              "translation": "意思是；本意是",
+              "notes": [
+                {
+                  "text": "not used in the progressive tenses",
+                  "translation": "不用于进行时"
+                }
+              ],
+              "examples": [
+                {
+                  "text": "What did he mean by that remark ?",
+                  "translation": "他说那话是什么意思？",
+                  "audio": [
+                    "/sound/_mean__gbs_2.mp3",
+                    "/sound/_mean__uss_2.mp3"
+                  ],
+                  "pattern": "~ sth"
+                },
+                {
+                  "text": "'Perhaps we should try another approach . ' ' What do you mean ? (= I don't understand what you are suggesting . ) '",
+                  "translation": "“也许我们应该试一试别的方法。” “你指的是什么方法？”",
+                  "audio": [
+                    "/sound/_mean__brs_9.mp3",
+                    "/sound/_mean__uss_9.mp3"
+                  ]
+                },
+                {
+                  "text": "What do you mean , you thought I wouldn't mind ? (= of course I mind and I am very angry )",
+                  "translation": "你这是什么意思？你以为我不会在意吗？",
+                  "audio": [
+                    "/sound/_mean__gbs_9.mp3",
+                    "/sound/_mean__ams_9.mp3"
+                  ]
+                },
+                {
+                  "text": "What she means is that there's no point in waiting here .",
+                  "translation": "她的意思是说在这儿等下去没什么意思。",
+                  "audio": [
+                    "/sound/_mean__gbs_10.mp3",
+                    "/sound/_mean__ams_10.mp3"
+                  ]
+                },
+                {
+                  "text": "I always found him a little strange , if you know what I mean (= if you understand what I mean by 'strange' ) .",
+                  "translation": "我总觉得他有点儿怪，如果你明白我这话是什么意思。",
+                  "audio": [
+                    "/sound/_mean__gbs_11.mp3",
+                    "/sound/_mean__ams_11.mp3"
+                  ]
+                },
+                {
+                  "text": "I know what you mean (= I understand and feel sympathy ) . I hated learning to drive too .",
+                  "translation": "我明白你的意思。我也不愿意学开车。",
+                  "audio": [
+                    "/sound/_mean__gbs_12.mp3",
+                    "/sound/_mean__ams_12.mp3"
+                  ]
+                },
+                {
+                  "text": "It was like — weird . Know what I mean ?",
+                  "translation": "它有点儿，怪异。你明白我的意思吗？",
+                  "audio": [
+                    "/sound/_mean__gbs_13.mp3",
+                    "/sound/_mean__ams_13.mp3"
+                  ]
+                },
+                {
+                  "text": "I see what you mean (= I understand although I may not agree ) , but I still think it's worth trying .",
+                  "translation": "我知道你是什么意思，但我仍然认为值得一试。",
+                  "audio": [
+                    "/sound/_mean__gbs_14.mp3",
+                    "/sound/_mean__ams_14.mp3"
+                  ]
+                },
+                {
+                  "text": "See what I mean (= I was right and this proves it , doesn't it ) ? She never agrees to anything I suggest .",
+                  "translation": "这下可证明我说的对了吧？我说什么她都不听。",
+                  "audio": [
+                    "/sound/_mean__gbs_15.mp3",
+                    "/sound/_mean__ams_15.mp3"
+                  ]
+                },
+                {
+                  "text": "'But Pete doesn't know we're here ! ' ' That's what I mean ! (= that's what I have been trying to tell you . ) '",
+                  "translation": "“可是皮特不知道我们在这儿呀！” “我就是这个意思嘛！”",
+                  "audio": [
+                    "/sound/_mean__gbs_16.mp3",
+                    "/sound/_mean__ams_16.mp3"
+                  ]
+                },
+                {
+                  "text": "Do you mean Ann Smith or Mary Smith ?",
+                  "translation": "你是说安 · 史密斯，还是说玛丽 · 史密斯？",
+                  "audio": [
+                    "/sound/_mean__gbs_17.mp3",
+                    "/sound/_mean__ams_17.mp3"
+                  ]
+                },
+                {
+                  "text": "Did he mean ( that ) he was dissatisfied with our service ?",
+                  "translation": "他是不是表示对我们的服务不满意？",
+                  "pattern": "~ ( that ) …"
+                },
+                {
+                  "text": "You mean (= are you telling me ) we have to start all over again ?",
+                  "translation": "你是不是说我们必须从头再来一遍？",
+                  "audio": [
+                    "/sound/_mean__gbs_18.mp3",
+                    "/sound/_mean__ams_18.mp3"
+                  ]
+                }
+              ]
+            }
+          ],
+          "usage_notes": [
+            {
+              "label": "i.e.",
+              "title": "Explaining what you mean",
+              "translation": "解释意思",
+              "entries": [
+                {
+                  "text": "Some poems are mnemonics, i.e. they are designed to help you remember something.",
+                  "translation": "有些诗歌是记忆代码，即是说，其目的是帮助人们记起某事。"
+                },
+                {
+                  "text": "Some poems are mnemonics, that is to say , they are designed to help you remember something.",
+                  "translation": "有些诗歌是记忆代码，就是说，其目的是帮助人们记起某事。"
+                },
+                {
+                  "text": "Mnemonic poems, that is poems designed to help you remember something, are an excellent way to learn lists.",
+                  "translation": "记事诗，即帮助人记起事情的诗歌，是记住一系列事物的极佳方式。"
+                },
+                {
+                  "text": "A limerick's rhyme scheme is A–A–B–B–A. In other words , the first, second, and fifth lines all rhyme with one another, while the third and fourth lines have their own rhyme.",
+                  "translation": "五行打油诗的韵律是 A-A-B-B-A。就是说，第一行、第二行和第五行押一个韵，而第三行和第四行押另一个韵。"
+                },
+                {
+                  "text": "In this exercise the reader is encouraged to work out the meaning, or rather the range of meanings, of the poem.",
+                  "translation": "这个练习鼓励读者弄清这首诗的意思，更确切地说是弄清其几种含意。"
+                },
+                {
+                  "text": "This is a poem about death, or, more precisely , dying.",
+                  "translation": "这是一首关于死亡的诗，更确切地说是关于临终的诗。"
+                },
+                {
+                  "text": "He says his poems deal with 'the big issues', by which he means love, loss, grief and death.",
+                  "translation": "他说他的诗涉及一些 “重大问题”，这些问题是指爱、失去、痛苦和死亡。"
+                }
+              ]
+            },
+            {
+              "label": "Correcting yourself",
+              "entries": [
+                {
+                  "text": "I'll be there at five fifteen, I mean five fifty—ten to six.",
+                  "translation": "我会在 5 点 15 分到那儿，不，应该是 5 点 50 分，差 10 分钟 6 点。"
+                },
+                {
+                  "text": "It'll be Tuesday— sorry, I meant to say Thursday.",
+                  "translation": "那就是星期二。不对，我想说的是星期四。"
+                },
+                {
+                  "text": "Sorry, what I mean is, we need two handouts per person.",
+                  "translation": "抱歉，我的意思是我们每个人需要两份讲义。"
+                },
+                {
+                  "text": "We can meet in the conference centre— or rather in front of the centre.",
+                  "translation": "我们可以在会议中心，确切地讲是在会议中心前面会合。"
+                },
+                {
+                  "text": "The painter— or should I say, the sculptor—was born in Padua.",
+                  "translation": "这名画家，应该说是雕塑家，生于帕多瓦。"
+                },
+                {
+                  "text": "It's one t and double s— no, sorry, one s and double t.",
+                  "translation": "是一个 t 和两个 s。不，搞错了，应该是一个 s 和两个 t。"
+                },
+                {
+                  "text": "It's on the fifth floor— no, actually, it's the fourth.",
+                  "translation": "是在六楼，不，实际上是在五楼。"
+                },
+                {
+                  "text": "Can I get two lattes and an espresso— no, scratch that, three lattes. ( NAmE , informal )",
+                  "translation": "请给我来两杯拿铁和一杯浓缩咖啡。不，不要那个，要三杯拿铁。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "have as purpose",
+          "translation": "有目的",
+          "senses": [
+            {
+              "id": "mean_sng_3",
+              "definition": "to have sth as a purpose or intention",
+              "translation": "打算；意欲；有…的目的",
+              "examples": [
+                {
+                  "text": "What did she mean by leaving so early (= why did she do it ) ?",
+                  "translation": "她为什么这么早就走了？",
+                  "audio": [
+                    "/sound/_mean__gbs_3.mp3",
+                    "/sound/_mean__uss_3.mp3"
+                  ],
+                  "pattern": "~ sth"
+                },
+                {
+                  "text": "Don't laugh ! I mean it (= I am serious ) .",
+                  "translation": "别笑！我是认真的。",
+                  "audio": [
+                    "/sound/_mean__brs_10.mp3",
+                    "/sound/_mean__uss_10.mp3"
+                  ]
+                },
+                {
+                  "text": "He means trouble (= to cause trouble ) .",
+                  "translation": "他存心捣乱。",
+                  "audio": [
+                    "/sound/_mean__gbs_19.mp3",
+                    "/sound/_mean__ams_19.mp3"
+                  ]
+                },
+                {
+                  "text": "Don't be upset — I'm sure she meant it as a compliment .",
+                  "translation": "别不高兴，我肯定她的原意是要称赞你的。",
+                  "audio": [
+                    "/sound/_mean__gbs_20.mp3",
+                    "/sound/_mean__ams_20.mp3"
+                  ],
+                  "pattern": "~ sth as sth"
+                },
+                {
+                  "text": "He means what he says (= is not joking , exaggerating , etc . ) .",
+                  "translation": "他说话是当真的。",
+                  "audio": [
+                    "/sound/_mean__gbs_21.mp3",
+                    "/sound/_mean__ams_21.mp3"
+                  ],
+                  "pattern": "~ what…"
+                },
+                {
+                  "text": "The chair was clearly meant for a child .",
+                  "translation": "这椅子显然是专为儿童设计的。",
+                  "audio": [
+                    "/sound/_mean__gbs_22.mp3",
+                    "/sound/_mean__ams_22.mp3"
+                  ],
+                  "pattern": "~ sth for sb / sth"
+                },
+                {
+                  "text": "Don't be angry . I'm sure she meant it for the best (= intended to be helpful ) .",
+                  "translation": "别生气了。我相信她是真心想要帮忙的。",
+                  "audio": [
+                    "/sound/_mean__gbs_23.mp3",
+                    "/sound/_mean__ams_23.mp3"
+                  ]
+                },
+                {
+                  "text": "She means to succeed .",
+                  "translation": "她一意求成。",
+                  "audio": [
+                    "/sound/_mean__gbs_24.mp3",
+                    "/sound/_mean__ams_24.mp3"
+                  ],
+                  "pattern": "~ to do sth"
+                },
+                {
+                  "text": "I'm sorry I hurt you . I didn't mean to .",
+                  "translation": "对不起，弄疼你了。我不是故意的。",
+                  "audio": [
+                    "/sound/_mean__gbs_25.mp3",
+                    "/sound/_mean__ams_25.mp3"
+                  ]
+                },
+                {
+                  "text": "I'm feeling very guilty — I've been meaning to call my parents for days , but still haven't got around to it .",
+                  "translation": "我感到非常内疚，几天来我一直打算给父母打电话，但还是没机会打。",
+                  "audio": [
+                    "/sound/_mean__gbs_26.mp3",
+                    "/sound/_mean__ams_26.mp3"
+                  ]
+                },
+                {
+                  "text": "I didn't mean you to read the letter .",
+                  "translation": "我没打算让你看那封信。",
+                  "audio": [
+                    "/sound/_mean__gbs_27.mp3",
+                    "/sound/_mean__ams_27.mp3"
+                  ],
+                  "pattern": "~ sb / sth to do sth"
+                },
+                {
+                  "text": "You're meant to (= you are supposed to ) pay before you go in .",
+                  "translation": "你要先交钱才能进去。",
+                  "audio": [
+                    "/sound/_mean__gbs_28.mp3",
+                    "/sound/_mean__ams_28.mp3"
+                  ]
+                },
+                {
+                  "text": "I never meant ( that ) you should come alone .",
+                  "translation": "我从来没打算让你一个人来。",
+                  "pattern": "~ ( that ) …"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "intend sb to be / do sth",
+          "translation": "让某人成为／做",
+          "senses": [
+            {
+              "id": "mean_sng_4",
+              "definition": "to intend sb to be or do sth",
+              "translation": "想要某人成为；想要某人去做",
+              "labels": [
+                {
+                  "type": "grammar",
+                  "text": "[ often passive ]"
+                }
+              ],
+              "examples": [
+                {
+                  "text": "I was never meant for the army (= did not have the qualities needed to become a soldier ) .",
+                  "translation": "我根本就不是块当兵的料。",
+                  "audio": [
+                    "/sound/_mean__gbs_29.mp3",
+                    "/sound/_mean__ams_29.mp3"
+                  ],
+                  "pattern": "~ sb for sth / sb"
+                },
+                {
+                  "text": "Duncan and Makiko were meant for each other (= are very suitable as partners ) .",
+                  "translation": "邓肯和真纪子真是天生的一对。",
+                  "audio": [
+                    "/sound/_mean__gbs_30.mp3",
+                    "/sound/_mean__ams_30.mp3"
+                  ]
+                },
+                {
+                  "text": "His father meant him to be an engineer .",
+                  "translation": "他父亲想让他当工程师。",
+                  "audio": [
+                    "/sound/_mean__gbs_31.mp3",
+                    "/sound/_mean__ams_31.mp3"
+                  ],
+                  "pattern": "~ sb / sth to be sth"
+                },
+                {
+                  "text": "She did everything to get the two of them together , but I guess it just wasn't meant to be .",
+                  "translation": "她极力撮合他们俩，但我觉得那根本不可能。",
+                  "audio": [
+                    "/sound/_mean__gbs_32.mp3",
+                    "/sound/_mean__ams_32.mp3"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "have as result",
+          "translation": "有结果",
+          "senses": [
+            {
+              "id": "mean_sng_5",
+              "definition": "to have sth as a result or a likely result",
+              "translation": "产生…结果；意味着",
+              "examples": [
+                {
+                  "text": "Spending too much now will mean a shortage of cash next year .",
+                  "translation": "现在花销太多就意味着明年现金短缺。",
+                  "audio": [
+                    "/sound/_mean__gbs_4.mp3",
+                    "/sound/_mean__uss_4.mp3"
+                  ],
+                  "pattern": "~ sth"
+                },
+                {
+                  "text": "Do you have any idea what it means to be poor ?",
+                  "translation": "你知不知道贫穷意味着什么？",
+                  "audio": [
+                    "/sound/_mean__brs_11.mp3",
+                    "/sound/_mean__uss_11.mp3"
+                  ],
+                  "pattern": "~ to be / do sth"
+                },
+                {
+                  "text": "We'll have to be careful with money but that doesn't mean ( that ) we can't enjoy ourselves .",
+                  "translation": "我们必须精打细算，可也并不是说我们就不能享受生活。",
+                  "pattern": "~ ( that ) …"
+                },
+                {
+                  "text": "This new order will mean working overtime .",
+                  "translation": "这新订单一来，我们就得加班加点。",
+                  "audio": [
+                    "/sound/_mean__gbs_33.mp3",
+                    "/sound/_mean__ams_33.mp3"
+                  ],
+                  "pattern": "~ doing sth"
+                },
+                {
+                  "text": "The injury could mean him missing next week's game .",
+                  "translation": "这次受伤可能使他无法参加下周的比赛。",
+                  "audio": [
+                    "/sound/_mean__gbs_34.mp3",
+                    "/sound/_mean__ams_34.mp3"
+                  ],
+                  "pattern": "~ sb / sth doing sth"
+                }
+              ]
+            }
+          ],
+          "highlight_lists": [
+            {
+              "title": "Verbs usually followed by infinitives",
+              "items": [
+                "afford",
+                "agree",
+                "appear",
+                "arrange",
+                "attempt",
+                "beg",
+                "choose",
+                "consent",
+                "decide",
+                "expect",
+                "fail",
+                "happen",
+                "hesitate",
+                "hope",
+                "intend",
+                "learn",
+                "manage",
+                "mean",
+                "neglect",
+                "offer",
+                "prepare",
+                "pretend",
+                "promise",
+                "refuse",
+                "swear",
+                "try",
+                "want",
+                "wish"
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "be important",
+          "translation": "重要",
+          "senses": [
+            {
+              "id": "mean_sng_6",
+              "definition": "to be of value or importance to sb",
+              "translation": "对某人重要（或有价值）",
+              "patterns": [
+                {
+                  "pattern": "~ sth to sb"
+                }
+              ],
+              "labels": [
+                {
+                  "type": "grammar",
+                  "text": "[ no passive ]"
+                }
+              ],
+              "examples": [
+                {
+                  "text": "Your friendship means a great deal to me .",
+                  "translation": "你的友谊对我来说是很珍贵的。",
+                  "audio": [
+                    "/sound/_mean__gbs_5.mp3",
+                    "/sound/_mean__uss_5.mp3"
+                  ]
+                },
+                {
+                  "text": "$20 means a lot (= represents a lot of money ) when you live on $100 a week .",
+                  "translation": "当你每周就靠 100 美元维持生活时，20 美元可是个大数目。"
+                },
+                {
+                  "text": "Money means nothing to him .",
+                  "translation": "金钱对于他来说毫无价值。",
+                  "audio": [
+                    "/sound/_mean__brs_12.mp3",
+                    "/sound/_mean__uss_12.mp3"
+                  ]
+                },
+                {
+                  "text": "Her children mean the world to her .",
+                  "translation": "她的孩子就是她的一切。",
+                  "audio": [
+                    "/sound/_mean__gbs_35.mp3",
+                    "/sound/_mean__ams_35.mp3"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "idioms": [
+        {
+          "text": "be meant to be sth",
+          "definition": "to be generally considered to be sth",
+          "translation": "被普遍认为是",
+          "examples": [
+            {
+              "text": "This restaurant is meant to be excellent .",
+              "translation": "都说这家饭店很棒。",
+              "audio": [
+                "/sound/_mean__gbs_6.mp3",
+                "/sound/_mean__uss_6.mp3"
+              ]
+            }
+          ]
+        },
+        {
+          "text": "I mean",
+          "definition": "used to explain or correct what you have just said",
+          "translation": "（解释或更正刚说过的话）我是说，意思是说",
+          "examples": [
+            {
+              "text": "It was so boring — I mean , nothing happened for the first hour !",
+              "translation": "真是无聊。我是说，一个小时都过去了，什么事儿都没发生！",
+              "audio": [
+                "/sound/_mean__gbs_7.mp3",
+                "/sound/_mean__uss_7.mp3"
+              ]
+            },
+            {
+              "text": "She's English — Scottish , I mean .",
+              "translation": "她是英格兰人，不对，是苏格兰人。",
+              "audio": [
+                "/sound/_mean__brs_13.mp3",
+                "/sound/_mean__uss_13.mp3"
+              ]
+            }
+          ]
+        },
+        {
+          "text": "mean ˈbusiness",
+          "definition": "to be serious in your intentions",
+          "translation": "是认真的；说话算数",
+          "examples": [
+            {
+              "text": "He has the look of a man who means business .",
+              "translation": "他看上去像是个说话算话的人。",
+              "audio": [
+                "/sound/_mean__gbs_36.mp3",
+                "/sound/_mean__ams_36.mp3"
+              ]
+            }
+          ]
+        },
+        {
+          "text": "mean ( sb ) no ˈharm",
+          "definition": "to not have any intention of hurting sb",
+          "translation": "没有恶意；并非出于恶意"
+        },
+        {
+          "text": "mean to ˈsay",
+          "definition": "used to emphasize what you are saying or to ask sb if they really mean what they say",
+          "translation": "（强调要说的话，或问对方是否真是这个意思）意思是说",
+          "examples": [
+            {
+              "text": "I mean to say , you should have known how he would react !",
+              "translation": "我的意思是说，你本应料到他会作何反应！",
+              "audio": [
+                "/sound/_mean__gbs_37.mp3",
+                "/sound/_mean__ams_37.mp3"
+              ]
+            },
+            {
+              "text": "Do you mean to say you've lost it ?",
+              "translation": "你是说你把那东西给弄丢了？",
+              "audio": [
+                "/sound/_mean__gbs_38.mp3",
+                "/sound/_mean__ams_38.mp3"
+              ]
+            }
+          ]
+        },
+        {
+          "text": "ˈmean well",
+          "definition": "to have good intentions , although their effect may not be good",
+          "translation": "本意是好的；出于好心"
+        }
+      ]
+    },
+    {
+      "pos": "adjective",
+      "forms": [
+        {
+          "label": "comparison",
+          "value": [
+            "mean·er",
+            "mean·est"
+          ]
+        }
+      ],
+      "groups": [
+        {
+          "guideword": "not generous",
+          "translation": "吝啬",
+          "senses": [
+            {
+              "id": "mean_sng_13",
+              "definition": "not willing to give or share things , especially money",
+              "translation": "吝啬的；小气的",
+              "labels": [
+                {
+                  "type": "label",
+                  "text": "( BrE )"
+                }
+              ],
+              "examples": [
+                {
+                  "text": "She's always been mean with money .",
+                  "translation": "她在花钱方面总是非常吝啬。",
+                  "audio": [
+                    "/sound/_mean__gbs_39.mp3",
+                    "/sound/_mean__ams_39.mp3"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "unkind",
+          "translation": "不友善",
+          "senses": [
+            {
+              "id": "mean_sng_14",
+              "definition": "unkind , for example by not letting sb have or do sth",
+              "translation": "不善良；刻薄",
+              "patterns": [
+                {
+                  "pattern": "~ ( to sb )"
+                }
+              ],
+              "topics": [
+                [
+                  "Personality and emotions",
+                  "Personality",
+                  "Unpleasant"
+                ]
+              ],
+              "examples": [
+                {
+                  "text": "Don't be so mean to your little brother !",
+                  "translation": "别对你弟弟那么刻薄！",
+                  "audio": [
+                    "/sound/_mean__gbs_40.mp3",
+                    "/sound/_mean__ams_40.mp3"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "angry / violent",
+          "translation": "愤怒；凶暴",
+          "senses": [
+            {
+              "id": "mean_sng_15",
+              "definition": "likely to become angry or violent",
+              "translation": "要发怒的；要发狂的",
+              "labels": [
+                {
+                  "type": "label",
+                  "text": "( especially NAmE )"
+                }
+              ],
+              "topics": [
+                [
+                  "Personality and emotions",
+                  "Personality",
+                  "Unpleasant"
+                ],
+                [
+                  "Personality and emotions",
+                  "Emotions",
+                  "Anger"
+                ]
+              ],
+              "examples": [
+                {
+                  "text": "That's a mean - looking dog .",
+                  "translation": "那狗看上去很凶。",
+                  "audio": [
+                    "/sound/_mean__gbs_41.mp3",
+                    "/sound/_mean__ams_41.mp3"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "skilful",
+          "translation": "熟练",
+          "senses": [
+            {
+              "id": "mean_sng_16",
+              "definition": "very good and skilful",
+              "translation": "熟练的；出色的",
+              "labels": [
+                {
+                  "type": "label",
+                  "text": "( informal , especially NAmE )"
+                }
+              ],
+              "examples": [
+                {
+                  "text": "He's a mean tennis player .",
+                  "translation": "他是一名出色的网球选手。",
+                  "audio": [
+                    "/sound/_mean__gbs_42.mp3",
+                    "/sound/_mean__ams_42.mp3"
+                  ]
+                },
+                {
+                  "text": "She plays a mean game of chess .",
+                  "translation": "她的国际象棋下得很棒。",
+                  "audio": [
+                    "/sound/_mean__gbs_43.mp3",
+                    "/sound/_mean__ams_43.mp3"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "average",
+          "translation": "平均",
+          "senses": [
+            {
+              "id": "mean_sng_17",
+              "definition": "average ; between the highest and the lowest , etc .",
+              "translation": "平均的；介于中间的",
+              "labels": [
+                {
+                  "type": "grammar",
+                  "text": "[ only before noun ]"
+                },
+                {
+                  "type": "label",
+                  "text": "( specialist )"
+                }
+              ],
+              "topics": [
+                [
+                  "Science",
+                  "Mathematics",
+                  "Mathematical terminology"
+                ]
+              ],
+              "examples": [
+                {
+                  "text": "the mean temperature",
+                  "translation": "平均气温"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "intelligence",
+          "translation": "智力",
+          "senses": [
+            {
+              "id": "mean_sng_18",
+              "definition": "not very great",
+              "translation": "平庸的；一般的",
+              "labels": [
+                {
+                  "type": "label",
+                  "text": "( formal )"
+                }
+              ],
+              "examples": [
+                {
+                  "text": "This should be clear even to the meanest intelligence .",
+                  "translation": "就是对智力最平庸的人来说，这也应当是非常明了的。",
+                  "audio": [
+                    "/sound/_mean__gbs_44.mp3",
+                    "/sound/_mean__ams_44.mp3"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "poor",
+          "translation": "穷",
+          "senses": [
+            {
+              "id": "mean_sng_19",
+              "definition": "poor and dirty in appearance",
+              "translation": "又穷又脏的",
+              "labels": [
+                {
+                  "type": "label",
+                  "text": "( literary )"
+                }
+              ],
+              "examples": [
+                {
+                  "text": "mean houses / streets",
+                  "translation": "脏乱的房屋／街道"
+                }
+              ]
+            },
+            {
+              "id": "mean_sng_20",
+              "definition": "born into or coming from a low social class",
+              "translation": "出身卑贱的；社会地位低下的",
+              "labels": [
+                {
+                  "type": "label",
+                  "text": "( old-fashioned )"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "idioms": [
+        {
+          "text": "be no mean…",
+          "definition": "used to say that sb is very good at doing sth",
+          "translation": "了不起；很出色",
+          "examples": [
+            {
+              "text": "His mother was a painter , and he's no mean artist himself .",
+              "translation": "他的母亲是画家，他本人也是很出色的艺术家。",
+              "audio": [
+                "/sound/_mean__gbs_45.mp3",
+                "/sound/_mean__ams_45.mp3"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pos": "noun",
+      "groups": [
+        {
+          "guideword": "middle way",
+          "translation": "中间",
+          "senses": [
+            {
+              "id": "mean_sng_",
+              "definition": "a quality , condition , or way of doing sth that is in the middle of two extremes and better than either of them",
+              "translation": "中间；中庸；折中",
+              "patterns": [
+                {
+                  "pattern": "~ ( between A and B )"
+                }
+              ],
+              "examples": [
+                {
+                  "text": "He needed to find a mean between frankness and rudeness .",
+                  "translation": "他需要在坦诚与唐突之间找到折中的方法。",
+                  "audio": [
+                    "/sound/_mean__gbs_46.mp3",
+                    "/sound/_mean__ams_46.mp3"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "guideword": "average",
+          "translation": "平均",
+          "senses": [
+            {
+              "id": "mean_sng_24",
+              "definition": "the value found by adding together all the numbers in a group , and dividing the total by the number of numbers",
+              "translation": "算术平均；平均数；平均值",
+              "labels": [
+                {
+                  "type": "label",
+                  "text": "( mathematics )"
+                }
+              ],
+              "topics": [
+                [
+                  "Science",
+                  "Mathematics",
+                  "Mathematical terminology"
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "idioms": [
+        {
+          "text": "the happy / golden ˈmean",
+          "definition": "a course of action that is not extreme",
+          "translation": "中庸之道"
+        }
+      ]
+    }
+  ]
+}
