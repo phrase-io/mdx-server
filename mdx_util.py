@@ -3,6 +3,8 @@
 
 import sys
 import re
+import threading
+from collections import OrderedDict
 from file_util import *
 from json_parser import parse_entry, to_json_bytes
 
@@ -39,6 +41,39 @@ def _lookup_entry_html(word, builder):
             str_content += _normalize_html(c)
     return str_content, search_word
 
+
+class LRUCacheBytes(object):
+    def __init__(self, max_bytes=1024 * 1024 * 512):  # default 512 MB
+        self.max_bytes = max_bytes
+        self.current_bytes = 0
+        self.data = OrderedDict()
+        self.lock = threading.Lock()
+
+    def get(self, key):
+        with self.lock:
+            if key not in self.data:
+                return None
+            value = self.data.pop(key)
+            self.data[key] = value
+            return value
+
+    def set(self, key, value):
+        size = len(value)
+        if size > self.max_bytes:
+            return
+        with self.lock:
+            if key in self.data:
+                old = self.data.pop(key)
+                self.current_bytes -= len(old)
+            self.data[key] = value
+            self.current_bytes += size
+            while self.current_bytes > self.max_bytes and self.data:
+                _, evicted = self.data.popitem(last=False)
+                self.current_bytes -= len(evicted)
+
+
+json_cache = LRUCacheBytes(max_bytes=1024 * 1024 * 1024)  # 1GB
+
 def get_definition_mdx(word, builder):
     """根据关键字得到MDX词典的解释"""
     str_content, _ = _lookup_entry_html(word, builder)
@@ -68,6 +103,10 @@ def get_definition_mdx(word, builder):
 
 
 def get_definition_json(word, builder):
+    cache_key = word.lower()
+    cached = json_cache.get(cache_key)
+    if cached is not None:
+        return [cached]
     html_content, resolved = _lookup_entry_html(word, builder)
     active_word = resolved or word
     if not html_content:
@@ -78,7 +117,9 @@ def get_definition_json(word, builder):
             data.setdefault('word', active_word)
         except RuntimeError as exc:
             data = {'word': active_word, 'error': str(exc)}
-    return [to_json_bytes(data)]
+    result = to_json_bytes(data)
+    json_cache.set(cache_key, result)
+    return [result]
 
 def get_definition_mdd(word, builder):
     """根据关键字得到MDX词典的媒体"""
