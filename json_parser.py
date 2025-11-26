@@ -164,6 +164,106 @@ def _extract_topics(sn_tag):
     return topics
 
 
+def _extract_help_entries(sn_tag):
+    entries = []
+    for helper in sn_tag.find_all('un', {'un': 'help'}):
+        entry = {'label': 'HELP', 'text': _text_excluding(helper, excluded={'chn', 'chnsep', 'boxtag'})}
+        translation = _text(helper.find('chn'))
+        if translation:
+            entry['translation'] = translation
+        entry = {k: v for k, v in entry.items() if v}
+        if entry:
+            entries.append(entry)
+    return entries
+
+
+def _parse_collocation_items(unbox):
+    items = []
+    for li in unbox.find_all('li'):
+        und = li.find('und') or li
+        pattern = _text_excluding(und)
+        translation = _text(und.find('chn'))
+        entry = {}
+        if pattern:
+            entry['pattern'] = pattern
+        if translation:
+            entry['translation'] = translation
+        if entry:
+            items.append(entry)
+    return items
+
+
+def _extract_collocations(sn_tag):
+    collocations = []
+    for box in sn_tag.find_all('unbox', {'type': 'colloc'}):
+        entry = {}
+        label = box.find('utitle')
+        title = _text_excluding(label)
+        if title:
+            entry['title'] = title
+        translation = _text(label.find('chn')) if label else None
+        if translation:
+            entry['translation'] = translation
+        heading = box.find('h2')
+        subtitle = _text_excluding(heading)
+        if subtitle:
+            entry['subtitle'] = subtitle
+        subtitle_tr = _text(heading.find('chn')) if heading else None
+        if subtitle_tr:
+            entry['subtitle_translation'] = subtitle_tr
+        items = _parse_collocation_items(box)
+        if items:
+            entry['items'] = items
+        entry = {k: v for k, v in entry.items() if v}
+        if entry:
+            collocations.append(entry)
+    return collocations
+
+
+def _normalize_image_src(img):
+    if not img:
+        return None
+    return _normalize_media_url(img.get('src'))
+
+
+def _extract_illustrations(sn_tag):
+    illustrations = []
+    for ill in sn_tag.find_all('ill-g', recursive=False):
+        caption_tag = ill.find('ill-txt')
+        caption = _text_excluding(caption_tag) if caption_tag else None
+        figures = []
+        for pic in ill.find_all('div', class_='pic'):
+            thumb_div = pic.find('div', class_='pic_thumb')
+            big_div = pic.find('div', class_='big_pic')
+            entry = {}
+            thumb_img = thumb_div.find('img') if thumb_div else None
+            big_img = big_div.find('img') if big_div else None
+            if thumb_img:
+                entry['thumbnail'] = _normalize_image_src(thumb_img)
+            if big_img:
+                entry['image'] = _normalize_image_src(big_img)
+            if not entry:
+                img = pic.find('img')
+                if img:
+                    entry['image'] = _normalize_image_src(img)
+            if entry:
+                figures.append(entry)
+        if not figures:
+            for img in ill.find_all('img'):
+                path = _normalize_image_src(img)
+                if path:
+                    entry = {'image': path}
+                    if img.get('alt'):
+                        entry['alt'] = img.get('alt')
+                    figures.append(entry)
+        if figures:
+            if caption:
+                for entry in figures:
+                    entry.setdefault('caption', caption)
+            illustrations.extend(figures)
+    return illustrations
+
+
 def _parse_sense(sn_tag):
     definition_tag = sn_tag.find('def')
     if not definition_tag:
@@ -190,12 +290,23 @@ def _parse_sense(sn_tag):
     examples = _extract_examples(sn_tag)
     if examples:
         sense['examples'] = examples
+    help_entries = _extract_help_entries(sn_tag)
+    if help_entries:
+        sense['helps'] = help_entries
+    collocations = _extract_collocations(sn_tag)
+    if collocations:
+        sense['collocations'] = collocations
+    images = _extract_illustrations(sn_tag)
+    if images:
+        sense['images'] = images
     return sense
 
 
 def _parse_usage_boxes(sn_group):
     notes = []
     for box in sn_group.find_all('unbox'):
+        if box.get('type') == 'colloc':
+            continue
         data = {}
         label = _text_excluding(box.find('utitle'))
         if label:
@@ -261,6 +372,8 @@ def _parse_sn_group(sn_group):
             result['translation'] = translation
     senses = []
     for sn_tag in sn_group.find_all('sn-g'):
+        if sn_tag.find_parent('idm-g'):
+            continue
         sense = _parse_sense(sn_tag)
         if sense:
             senses.append(sense)
@@ -317,6 +430,8 @@ def _parse_idioms(block):
                     entry['translation'] = translation
                 if sense.get('examples'):
                     entry['examples'] = sense['examples']
+                if sense.get('helps'):
+                    entry['helps'] = sense['helps']
         entry = {k: v for k, v in entry.items() if v}
         if entry:
             idioms.append(entry)
@@ -336,7 +451,10 @@ def _parse_pos_section(section):
         entry['forms'] = forms
     group_nodes = section.select('subentry-g > sn-gs')
     if not group_nodes:
-        group_nodes = section.find_all('sn-gs', recursive=False)
+        group_nodes = [
+            node for node in section.find_all('sn-gs')
+            if not node.find_parent('idm-g')
+        ]
     groups = []
     for sn_group in group_nodes:
         data = _parse_sn_group(sn_group)

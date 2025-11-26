@@ -101,9 +101,9 @@ def application(environ, start_response):
 
 # 新线程执行的代码
 def loop():
-    # 创建一个服务器，IP地址为空，端口是8000，处理函数是application:
-    httpd = make_server('', 8000, application)
-    print("Serving HTTP on port 8000...")
+    # 创建一个服务器，IP地址为空，端口是8888，处理函数是application:
+    httpd = make_server('', 8888, application)
+    print("Serving HTTP on port 8888...")
     # 开始监听HTTP请求:
     httpd.serve_forever()
 
