@@ -110,17 +110,55 @@ def _parse_sense(sn):
     return sense
 
 
+def _collect_senses_from_container(container):
+    senses = []
+    for sngs in container.find_all('sn-gs', recursive=False):
+        for sn in sngs.find_all('sn-g'):
+            sense = _parse_sense(sn)
+            if sense:
+                senses.append(sense)
+    return senses
+
+
 def _extract_parts(soup):
     parts = []
-    for sub in soup.find_all('subentry-g'):
-        pos_tag = sub.find('pos')
+    subentries = soup.find_all('subentry-g')
+    if subentries:
+        for sub in subentries:
+            pos_tag = sub.find('pos')
+            part = {'pos': _text(pos_tag)} if pos_tag else {}
+            senses = _collect_senses_from_container(sub)
+            if senses:
+                part['senses'] = senses
+                parts.append(part)
+        if parts:
+            return parts
+
+    forbidden_parents = {'idm-g', 'idm-gs', 'idm-gs-blk', 'pv-g', 'pv-gs', 'pv-gs-blk'}
+    processed = set()
+    for top in soup.find_all('top-g'):
+        parent = top.parent
+        parent_name = parent.name if parent else ''
+        if parent_name in forbidden_parents:
+            continue
+        key = id(top)
+        if key in processed:
+            continue
+        processed.add(key)
+        pos_tag = top.find('pos')
         part = {'pos': _text(pos_tag)} if pos_tag else {}
         senses = []
-        for sngs in sub.find_all('sn-gs', recursive=False):
-            for sn in sngs.find_all('sn-g'):
-                sense = _parse_sense(sn)
-                if sense:
-                    senses.append(sense)
+        sibling = top.next_sibling
+        while sibling:
+            name = getattr(sibling, 'name', None)
+            if name == 'top-g' and sibling.parent == parent:
+                break
+            if name == 'sn-gs':
+                for sn in sibling.find_all('sn-g'):
+                    sense = _parse_sense(sn)
+                    if sense:
+                        senses.append(sense)
+            sibling = sibling.next_sibling
         if senses:
             part['senses'] = senses
             parts.append(part)
