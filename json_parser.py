@@ -508,6 +508,8 @@ def _parse_pos_section(section):
     idioms = _parse_idioms(section.find('idm-gs-blk'))
     if idioms:
         entry['idioms'] = idioms
+    if 'pos' not in entry and any(entry.get(key) for key in ('forms', 'groups', 'idioms')):
+        entry['pos'] = 'base'
     entry = {k: v for k, v in entry.items() if v}
     if len(entry) > 1:
         return entry
