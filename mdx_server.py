@@ -50,14 +50,6 @@ print("resouce path : " + resource_path)
 builder = None
 
 
-def _cors_headers(headers=None):
-    base = list(headers) if headers else []
-    base.append(('Access-Control-Allow-Origin', '*'))
-    base.append(('Access-Control-Allow-Methods', 'GET,OPTIONS'))
-    base.append(('Access-Control-Allow-Headers', 'Content-Type,Accept,Origin'))
-    return base
-
-
 def get_url_map():
     result = {}
     files = []
@@ -74,9 +66,6 @@ def get_url_map():
 def application(environ, start_response):
     path_info = environ['PATH_INFO'].encode('iso8859-1').decode('utf-8')
     print(path_info)
-    if environ.get('REQUEST_METHOD', 'GET').upper() == 'OPTIONS':
-        start_response('204 No Content', _cors_headers())
-        return [b'']
     m = re.match('/(.*)', path_info)
     word = ''
     if m is not None:
@@ -84,10 +73,10 @@ def application(environ, start_response):
 
     if path_info.startswith('/api/entry/'):
         api_word = unquote(path_info[len('/api/entry/'):])
-        start_response('200 OK', _cors_headers([('Content-Type', 'application/json; charset=utf-8')]))
+        start_response('200 OK', [('Content-Type', 'application/json; charset=utf-8')])
         return get_definition_json(api_word, builder)
     if path_info == '/api/entry':
-        start_response('400 Bad Request', _cors_headers([('Content-Type', 'application/json; charset=utf-8')]))
+        start_response('400 Bad Request', [('Content-Type', 'application/json; charset=utf-8')])
         return [b'{"error":"word required"}']
 
     url_map = get_url_map()
@@ -95,18 +84,18 @@ def application(environ, start_response):
     if path_info in url_map:
         url_file = url_map[path_info]
         content_type = content_type_map.get(file_util_get_ext(url_file), 'text/html; charset=utf-8')
-        start_response('200 OK', _cors_headers([('Content-Type', content_type)]))
+        start_response('200 OK', [('Content-Type', content_type)])
         return [file_util_read_byte(url_file)]
     elif file_util_get_ext(path_info) in content_type_map:
         content_type = content_type_map.get(file_util_get_ext(path_info), 'text/html; charset=utf-8')
-        start_response('200 OK', _cors_headers([('Content-Type', content_type)]))
+        start_response('200 OK', [('Content-Type', content_type)])
         return get_definition_mdd(path_info, builder)
     else:
-        start_response('200 OK', _cors_headers([('Content-Type', 'text/html; charset=utf-8')]))
+        start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
         return get_definition_mdx(path_info[1:], builder)
 
 
-    start_response('200 OK', _cors_headers([('Content-Type', 'text/html; charset=utf-8')]))
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     return [b'<h1>WSGIServer ok!</h1>']
 
 
