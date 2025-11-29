@@ -4,6 +4,7 @@
 import sys
 import re
 import threading
+import os
 from collections import OrderedDict
 from file_util import *
 from json_parser import parse_entry, to_json_bytes
@@ -103,8 +104,54 @@ def get_definition_mdx(word, builder):
     return [output_html.encode('utf-8')]
 
 
-def get_definition_json(word, builder):
-    cache_key = "{}:{}".format(CACHE_VERSION, word.lower())
+def _rewrite_media_urls(data, base):
+    if not base:
+        return data
+    b = base.rstrip('/')
+    def ra(v):
+        if not v:
+            return v
+        if v.startswith(b + '/'):
+            return v
+        if v.startswith('/sound/'):
+            return b + v
+        fn = v.split('/')[-1]
+        return b + '/sound/' + fn
+    def ri(v):
+        if not v:
+            return v
+        if v.startswith(b + '/'):
+            return v
+        fn = v.split('/')[-1]
+        return b + '/img/' + fn
+    prs = data.get('pronunciations') or []
+    for p in prs:
+        a = p.get('audio')
+        if a:
+            p['audio'] = ra(a)
+    entries = data.get('entries') or []
+    for e in entries:
+        groups = e.get('groups') or []
+        for g in groups:
+            senses = g.get('senses') or []
+            for s in senses:
+                examples = s.get('examples') or []
+                for ex in examples:
+                    aud = ex.get('audio')
+                    if aud:
+                        ex['audio'] = [ra(x) for x in aud]
+                imgs = s.get('images') or []
+                for im in imgs:
+                    th = im.get('thumbnail')
+                    if th:
+                        im['thumbnail'] = ri(th)
+                    ig = im.get('image')
+                    if ig:
+                        im['image'] = ri(ig)
+    return data
+
+def get_definition_json(word, builder, media_prefix=None):
+    cache_key = "{}:{}:{}".format(CACHE_VERSION, (media_prefix or 'none'), word.lower())
     cached = json_cache.get(cache_key)
     if cached is not None:
         return [cached]
@@ -118,6 +165,8 @@ def get_definition_json(word, builder):
             data.setdefault('word', active_word)
         except RuntimeError as exc:
             data = {'word': active_word, 'error': str(exc)}
+    if media_prefix:
+        data = _rewrite_media_urls(data, media_prefix)
     result = to_json_bytes(data)
     json_cache.set(cache_key, result)
     return [result]

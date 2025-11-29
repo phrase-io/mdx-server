@@ -71,6 +71,14 @@ def application(environ, start_response):
     if m is not None:
         word = m.groups()[0]
 
+    if path_info.startswith('/api/dic/'):
+        api_word = unquote(path_info[len('/api/dic/'):])
+        start_response('200 OK', [('Content-Type', 'application/json; charset=utf-8')])
+        return get_definition_json(api_word, builder, '/api/dic')
+    if path_info == '/api/dic':
+        start_response('400 Bad Request', [('Content-Type', 'application/json; charset=utf-8')])
+        return [b'{"error":"word required"}']
+
     if path_info.startswith('/api/entry/'):
         api_word = unquote(path_info[len('/api/entry/'):])
         start_response('200 OK', [('Content-Type', 'application/json; charset=utf-8')])
