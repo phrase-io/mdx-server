@@ -3,6 +3,7 @@
 
 import sys
 import re
+import subprocess
 import threading
 import os
 from collections import OrderedDict
@@ -16,26 +17,45 @@ def _normalize_html(html):
     return html
 
 
+_LINK_PATTERN = re.compile(r"@@@LINK=([\w\s]*)")
+
+
+def _lemma_word(word):
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lemma.py')
+    try:
+        completed = subprocess.run(
+            [sys.executable, script, word],
+            capture_output=True,
+            text=True,
+            timeout=3,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+    lemma = (completed.stdout or "").strip()
+    if not lemma or lemma.lower() == word.lower():
+        return ""
+    return lemma
+
+
 def _lookup_entry_html(word, builder):
     if builder is None:
         return "", word
     search_word = word
     content = builder.mdx_lookup(search_word)
     if len(content) < 1:
-        fp = os.popen('python lemma.py ' + word)
-        lemma_word = fp.read().strip()
-        fp.close()
+        lemma_word = _lemma_word(word)
         if lemma_word:
             print("lemma: " + lemma_word)
             search_word = lemma_word
             content = builder.mdx_lookup(search_word)
-    pattern = re.compile(r"@@@LINK=([\\w\\s]*)")
     if content:
-        rst = pattern.match(content[0])
+        rst = _LINK_PATTERN.match(content[0])
         if rst is not None:
             link = rst.group(1).strip()
-            search_word = link
-            content = builder.mdx_lookup(link)
+            if link:
+                search_word = link
+                content = builder.mdx_lookup(link)
     str_content = ""
     if len(content) > 0:
         for c in content:
@@ -163,7 +183,7 @@ def get_definition_json(word, builder, media_prefix=None):
         try:
             data = parse_entry(html_content, resolved_word=active_word)
             data.setdefault('word', active_word)
-        except RuntimeError as exc:
+        except Exception as exc:
             data = {'word': active_word, 'error': str(exc)}
     if media_prefix:
         data = _rewrite_media_urls(data, media_prefix)

@@ -148,8 +148,8 @@ class IndexBuilder(object):
 
     def _replace_stylesheet(self, txt):
         # substitute stylesheet definition
-        txt_list = re.split('`\d+`', txt)
-        txt_tag = re.findall('`\d+`', txt)
+        txt_list = re.split(r'`\d+`', txt)
+        txt_tag = re.findall(r'`\d+`', txt)
         txt_styled = txt_list[0]
         for j, p in enumerate(txt_list[1:]):
             style = self._stylesheet[txt_tag[j][1:-1]]
@@ -342,12 +342,26 @@ class IndexBuilder(object):
             lookup_result_list.append(fetcher(data_file, index))
         return lookup_result_list
 
+    def _lookup_key(self, conn, mdx_file, keyword):
+        cursor = conn.execute("SELECT * FROM MDX_INDEX WHERE key_text = ?", (keyword,))
+        return self._rows_to_lookup(cursor, mdx_file, self.get_mdx_by_index)
+
     def mdx_lookup(self, keyword):
         conn = sqlite3.connect(self._mdx_db)
         mdx_file = open(self._mdx_file,'rb')
         try:
-            cursor = conn.execute("SELECT * FROM MDX_INDEX WHERE key_text = ?", (keyword,))
-            lookup_result_list = self._rows_to_lookup(cursor, mdx_file, self.get_mdx_by_index)
+            lookup_result_list = self._lookup_key(conn, mdx_file, keyword)
+            # 前端会把词转成小写。牛津词头里 I / A 是大写，精确匹配会落空。
+            # 用几次索引查询，不用 COLLATE NOCASE 扫全表。
+            if not lookup_result_list and keyword:
+                seen = {keyword}
+                for candidate in (keyword.lower(), keyword.upper(), keyword.capitalize()):
+                    if not candidate or candidate in seen:
+                        continue
+                    seen.add(candidate)
+                    lookup_result_list = self._lookup_key(conn, mdx_file, candidate)
+                    if lookup_result_list:
+                        break
         finally:
             mdx_file.close()
             conn.close()

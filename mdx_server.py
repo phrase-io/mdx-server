@@ -5,10 +5,12 @@ import threading
 import re
 import os
 import sys
+import traceback
 from urllib.parse import unquote
 
 
-from wsgiref.simple_server import make_server
+from socketserver import ThreadingMixIn
+from wsgiref.simple_server import WSGIServer, make_server
 from file_util import *
 from mdx_util import *
 from mdict_query import IndexBuilder
@@ -63,7 +65,20 @@ def get_url_map():
     return result
 
 
+class ThreadingWSGIServer(ThreadingMixIn, WSGIServer):
+    daemon_threads = True
+
+
 def application(environ, start_response):
+    try:
+        return _application(environ, start_response)
+    except Exception:
+        traceback.print_exc()
+        start_response('500 Internal Server Error', [('Content-Type', 'application/json; charset=utf-8')])
+        return [b'{"error":"dictionary lookup failed"}']
+
+
+def _application(environ, start_response):
     path_info = environ['PATH_INFO'].encode('iso8859-1').decode('utf-8')
     print(path_info)
     m = re.match('/(.*)', path_info)
@@ -110,7 +125,7 @@ def application(environ, start_response):
 # 新线程执行的代码
 def loop():
     # 创建一个服务器，IP地址为空，端口是8888，处理函数是application:
-    httpd = make_server('', 8888, application)
+    httpd = make_server('', 8888, application, server_class=ThreadingWSGIServer)
     print("Serving HTTP on port 8888...")
     # 开始监听HTTP请求:
     httpd.serve_forever()
