@@ -8,13 +8,11 @@ import threading
 import os
 from collections import OrderedDict
 from file_util import *
-from json_parser import parse_entry, to_json_bytes
+from json_parser import normalize_html, parse_entry, to_json_bytes
+from phrase_parser import lookup_phrase
 
 
-def _normalize_html(html):
-    html = html.replace("\r\n", "").replace("entry:/", "")
-    html = re.sub(r'(?i)sound://', '/sound/', html)
-    return html
+_normalize_html = normalize_html
 
 
 _LINK_PATTERN = re.compile(r"@@@LINK=([\w\s]*)")
@@ -144,6 +142,11 @@ def _rewrite_media_urls(data, base):
             return v
         fn = v.split('/')[-1]
         return b + '/img/' + fn
+    for block in data.get('blocks') or []:
+        for sense in block.get('senses') or []:
+            for ex in sense.get('examples') or []:
+                if ex.get('audio'):
+                    ex['audio'] = [ra(x) for x in ex['audio']]
     prs = data.get('pronunciations') or []
     for p in prs:
         a = p.get('audio')
@@ -190,6 +193,23 @@ def get_definition_json(word, builder, media_prefix=None):
     result = to_json_bytes(data)
     json_cache.set(cache_key, result)
     return [result]
+
+def get_phrase_json(phrase, builder, media_prefix=None):
+    """短语页用：习语 / 短语动词的全部义项、语体标签、例句和同族短语。"""
+    cache_key = "phrase:{}:{}:{}".format(CACHE_VERSION, (media_prefix or 'none'), phrase.lower())
+    cached = json_cache.get(cache_key)
+    if cached is not None:
+        return [cached]
+    try:
+        data = lookup_phrase(phrase, builder)
+    except Exception as exc:
+        data = {'phrase': phrase, 'found': False, 'error': str(exc), 'blocks': [], 'related': []}
+    if media_prefix:
+        data = _rewrite_media_urls(data, media_prefix)
+    result = to_json_bytes(data)
+    json_cache.set(cache_key, result)
+    return [result]
+
 
 def get_definition_mdd(word, builder):
     """根据关键字得到MDX词典的媒体"""

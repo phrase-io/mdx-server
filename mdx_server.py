@@ -86,6 +86,15 @@ def _application(environ, start_response):
     if m is not None:
         word = m.groups()[0]
 
+    if path_info.startswith('/api/dic/phrase/'):
+        phrase = unquote(path_info[len('/api/dic/phrase/'):])
+        start_response('200 OK', [('Content-Type', 'application/json; charset=utf-8')])
+        return get_phrase_json(phrase, builder, '/api/dic')
+    if path_info.startswith('/api/phrase/'):
+        phrase = unquote(path_info[len('/api/phrase/'):])
+        start_response('200 OK', [('Content-Type', 'application/json; charset=utf-8')])
+        return get_phrase_json(phrase, builder)
+
     if path_info.startswith('/api/dic/'):
         api_word = unquote(path_info[len('/api/dic/'):])
         start_response('200 OK', [('Content-Type', 'application/json; charset=utf-8')])

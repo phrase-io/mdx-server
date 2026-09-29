@@ -1,4 +1,5 @@
 import json
+import re
 from urllib.parse import urlparse
 
 try:
@@ -6,6 +7,12 @@ try:
 except ImportError:  # pragma: no cover - optional dependency
     BeautifulSoup = None
     NavigableString = None
+
+
+def normalize_html(html):
+    """mdx 原文里的换行、entry:/ 前缀和 sound:// 发音地址统一处理。"""
+    html = html.replace("\r\n", "").replace("entry:/", "")
+    return re.sub(r'(?i)sound://', '/sound/', html)
 
 
 def _text(tag):
