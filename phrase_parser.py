@@ -60,10 +60,16 @@ def _structured_labels(blocks):
     return unique
 
 
+def _own(block, tags):
+    """只要属于这个块自己的元素：短语动词里常嵌着别的习语（grow up 里嵌着 great oaks from little acorns grow），
+    嵌套块的义项和标签不能算到外层头上。"""
+    return [tag for tag in block.find_all(tags) if tag.find_parent(list(_BLOCK_TAGS)) is block]
+
+
 def _block_labels(block):
     """块级标签：习语 / 短语动词本身的语体（reg）和地区（geo），不含义项内的。"""
     top = block.find("top-g") or block
-    return _structured_labels(blk for blk in top.find_all("label-g-blk") if not blk.find_parent("sn-g"))
+    return _structured_labels(blk for blk in _own(top, "label-g-blk") if not blk.find_parent("sn-g"))
 
 
 def _sense_labels(sn):
@@ -77,7 +83,7 @@ def _parse_block(block):
     if not head:
         return None
     senses = []
-    for sn in block.find_all("sn-g"):
+    for sn in _own(block, "sn-g"):
         sense = _parse_sense(sn)
         if sense:
             sense.pop("id", None)
@@ -136,10 +142,14 @@ def lookup_phrase(phrase, builder):
     if not query or builder is None or BeautifulSoup is None:
         return {"phrase": query, "found": False, "blocks": [], "related": []}
     blocks, seen = [], set()
+    wanted = set(query.split())
     for html in _collect_html(query, builder):
         for block in _blocks_in(html):
             parsed = _parse_block(block)
             if not parsed:
+                continue
+            # 同一页里还会有别的短语（grow up 页里嵌着 great oaks … grow）：写法里要包含查询的全部单词
+            if not wanted <= set(re.findall(r"[a-z']+", normalize_phrase(parsed["display"]))):
                 continue
             key = (parsed["display"], tuple(s.get("definition") for s in parsed["senses"]))
             if key in seen:
